@@ -58,7 +58,7 @@ Be aware that the component must return the type of data you configure in the we
 {{% /tab %}}
 {{< /tabs >}}
 
-6. Replace the URL value with the URL of your cloud/lambda function.
+6. Replace the URL value with the URL of your cloud function or lambda.
 
    ![The webhook configured with an example URL in the Viam app.](/build/configure/webhook-configured.png)
 
@@ -66,7 +66,7 @@ Be aware that the component must return the type of data you configure in the we
 {{% tab name="Raw JSON" %}}
 
 If you prefer to configure your webhook with raw JSON instead of the config builder, you can paste one of the following JSON templates into your JSON config.
-`"webhooks"` is a top-level section like `"components"` or `"services"`.
+The `"webhooks"` section is a top-level section similar to `"components"` or `"services"`.
 
 {{< tabs >}}
 {{% tab name="JSON Template: Data Synced" %}}
@@ -74,7 +74,7 @@ If you prefer to configure your webhook with raw JSON instead of the config buil
 ```json {class="line-numbers linkable-line-numbers"}
   "webhooks": [
     {
-      "url": "<Insert your own cloud function or lambda URL for sending the event>",
+      "url": "https://1abcde2ab3cd4efg5abcdefgh10zyxwv.lambda-url.us-east-1.on.aws",
       "event": {
         "type": "part_data_ingested",
         "attributes": {
@@ -91,7 +91,7 @@ If you prefer to configure your webhook with raw JSON instead of the config buil
 ```json {class="line-numbers linkable-line-numbers"}
   "webhooks": [
     {
-      "url": "<Insert your own cloud function or lambda URL for sending the event>",
+      "url": "https://1abcde2ab3cd4efg5abcdefgh10zyxwv.lambda-url.us-east-1.on.aws",
       "event": {
         "type": "part_online",
         "attributes": {
@@ -176,8 +176,8 @@ If you prefer to configure your webhook with raw JSON instead of the config buil
 {{% /tab %}}
 {{< /tabs >}}
 
-7. Write your cloud/lambda function to process the request from `viam-server`.
-   The following example function sends a Slack message with a machine's details, such as robot and location IDs, when it receives a request:
+7. Write your cloud function or lambda to process the request from `viam-server`.
+   The following example function demonstrates sending a message with a machine's details, such as robot and location IDs, when it receives a request:
 
    ```python {class="line-numbers linkable-line-numbers"}
    import functions_framework
@@ -193,15 +193,15 @@ If you prefer to configure your webhook with raw JSON instead of the config buil
        "Robot-ID": request.headers['robot-id'] if 'robot-id' in request.headers else 'no value'
      }
 
-     slack_url = "<paste in your own Slack URL>"
+     webhook = "<paste in your own webhook URL>"
      headers = {}
 
-     response = requests.post(slack_url, json=payload, headers=headers)
+     response = requests.post(webhook, json=payload, headers=headers)
 
      request_json = request.get_json(silent=True)
      request_args = request.args
 
-     return 'Sent request to {}'.format(slack_url)
+     return 'Sent request to {}'.format(webhook)
 
    ```
 
